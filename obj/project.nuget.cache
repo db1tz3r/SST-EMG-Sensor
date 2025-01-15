@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RA80zG39ogY=",
+  "dgSpecHash": "ZP4ACxkzrDU=",
   "success": true,
-  "projectFilePath": "c:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj",
+  "projectFilePath": "C:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\bitzer\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
     "C:\\Users\\bitzer\\.nuget\\packages\\system.configuration.configurationmanager\\7.0.0\\system.configuration.configurationmanager.7.0.0.nupkg.sha512",
@@ -12,5 +12,12 @@
     "C:\\Users\\bitzer\\.nuget\\packages\\system.security.permissions\\7.0.0\\system.security.permissions.7.0.0.nupkg.sha512",
     "C:\\Users\\bitzer\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Fehler beim Abrufen von Paketsicherheitsrisikodaten: Der Dienstindex für die Quelle \"https://api.nuget.org/v3/index.json\" konnte nicht geladen werden."
+    }
+  ]
 }

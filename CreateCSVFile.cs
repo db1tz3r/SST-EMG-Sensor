@@ -1,0 +1,137 @@
+using System;
+using System.IO;
+using Waveplus.DaqSys;
+using Waveplus.DaqSysInterface;
+using CyUSB;
+
+public class DataCapture
+{
+    private DaqSystem daqSystem;
+    private StreamWriter csvWriter;
+
+    public DataCapture()
+    {
+        daqSystem = new DaqSystem();
+        Console.WriteLine("DaqSystem initialisiert.");
+    }
+
+    public void Initialize()
+    {
+        USBDeviceList usbDevices = new USBDeviceList(CyConst.DEVICES_CYUSB);
+        CyUSBDevice myDevice = usbDevices[0x04B4, 0x1002] as CyUSBDevice;
+
+        if (myDevice != null)
+        {
+            Console.WriteLine("Gerät gefunden.");
+        }
+        else
+        {
+            Console.WriteLine("Kein Gerät gefunden.");
+            throw new Exception("Gerät nicht verbunden.");
+        }
+
+        // Sensor 1 aktivieren
+        int sensorId = 1;
+        int installedSensors = daqSystem.InstalledSensors;
+        if (sensorId <= installedSensors)
+        {
+            daqSystem.EnableSensor(sensorId);
+            Console.WriteLine($"Sensor {sensorId} aktiviert.");
+        }
+        else
+        {
+            throw new Exception("Sensor 1 ist nicht installiert.");
+        }
+
+        // Datenerfassung konfigurieren
+        ICaptureConfiguration captureConfig = new CaptureConfiguration
+        {
+            SamplingRate = SamplingRate.Hz_2000, // Beispiel: 2000 Hz
+            ExternalTriggerEnabled = false
+        };
+        daqSystem.ConfigureCapture(captureConfig);
+        Console.WriteLine("Datenerfassung konfiguriert.");
+    }
+
+    public void StartCapture()
+    {
+        // CSV-Datei zum Schreiben öffnen
+        string filePath = "captured_data.csv";
+        csvWriter = new StreamWriter(filePath);
+        csvWriter.WriteLine("Samples"); // Überschrift der CSV-Datei (kann angepasst werden)
+
+        daqSystem.StartCapturing(DataAvailableEventPeriod.ms_100);
+        Console.WriteLine("Datenerfassung gestartet.");
+
+        // Ereignis, wenn Daten verfügbar sind
+        daqSystem.DataAvailable += (sender, e) =>
+        {
+            float[] samples = new float[e.Samples.GetLength(1)];
+            for (int i = 0; i < e.Samples.GetLength(1); i++)
+            {
+                samples[i] = e.Samples[0, i];
+            }
+
+            // Schreibe jedes Sample in eine neue Zeile der CSV-Datei
+            WriteDataToCsv(samples);
+        };
+
+        // Warten auf eine manuelle Eingabe, um das Capturing zu stoppen
+        Console.WriteLine("Drücke 'Q' zum Beenden der Datenerfassung.");
+
+        // Schleife zum Überprüfen, ob eine Taste gedrückt wurde
+        while (true)
+        {
+            // Überprüfe, ob Eingabe vorhanden ist
+            if (Console.In.Peek() >= 0) // Wenn ein Zeichen in der Eingabe verfügbar ist
+            {
+                var key = Console.ReadKey(intercept: true).Key; // Lese die Eingabe
+                if (key == ConsoleKey.Q)
+                {
+                    StopCapture();
+                    break;
+                }
+            }
+        }
+    }
+
+    public void StopCapture()
+    {
+        // Stoppe die Datenerfassung und schließe die CSV-Datei
+        daqSystem.StopCapturing();
+        csvWriter.Close();
+        Console.WriteLine("Datenerfassung gestoppt und CSV-Datei geschlossen.");
+    }
+
+    private void WriteDataToCsv(float[] samples)
+    {
+        // Schreibe jedes Sample in eine neue Zeile der CSV-Datei
+        foreach (var sample in samples)
+        {
+            csvWriter.WriteLine(sample); // Jede Zahl kommt in eine neue Zeile
+        }
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        try
+        {
+            // Erstelle und initialisiere das DataCapture-Objekt
+            DataCapture dataCapture = new DataCapture();
+            dataCapture.Initialize();
+
+            // Starte die Datenerfassung
+            dataCapture.StartCapture();
+
+            // Das Programm wartet nun, bis der Benutzer die 'Q'-Taste drückt, um die Datenerfassung zu stoppen
+            Console.WriteLine("Datenerfassung abgeschlossen. CSV-Datei wurde erstellt.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Fehler: " + ex.Message);
+        }
+    }
+}

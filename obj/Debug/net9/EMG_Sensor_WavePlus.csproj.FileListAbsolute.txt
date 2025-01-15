@@ -39,3 +39,4 @@ c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\bin\Debug\net9\ru
 c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\bin\Debug\net9\runtimes\win\lib\net7.0\System.Windows.Extensions.dll
 c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\bin\Debug\net9\System.Deployment.dll
 c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\bin\Debug\net9\de\System.Deployment.resources.dll
+C:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\obj\Debug\net9\EMG_Sensor_WavePlus.sourcelink.json

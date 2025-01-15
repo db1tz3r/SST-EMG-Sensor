@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj": {}
+    "C:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj": {}
   },
   "projects": {
-    "c:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj": {
+    "C:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj",
+        "projectUniqueName": "C:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj",
         "projectName": "EMG_Sensor_WavePlus",
-        "projectPath": "c:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj",
+        "projectPath": "C:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\EMG_Sensor_WavePlus.csproj",
         "packagesPath": "C:\\Users\\bitzer\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\obj\\",
+        "outputPath": "C:\\Users\\bitzer\\Documents\\VisualStudioCode\\EMG_Sensor_WavePlus\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\bitzer\\AppData\\Roaming\\NuGet\\NuGet.Config"
