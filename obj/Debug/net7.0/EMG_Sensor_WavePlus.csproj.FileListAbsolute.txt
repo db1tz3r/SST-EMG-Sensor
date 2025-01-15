@@ -1,0 +1,5 @@
+c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\obj\Debug\net7.0\EMG_Sensor_WavePlus.csproj.AssemblyReference.cache
+c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\obj\Debug\net7.0\EMG_Sensor_WavePlus.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\obj\Debug\net7.0\EMG_Sensor_WavePlus.AssemblyInfoInputs.cache
+c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\obj\Debug\net7.0\EMG_Sensor_WavePlus.AssemblyInfo.cs
+c:\Users\bitzer\Documents\VisualStudioCode\EMG_Sensor_WavePlus\obj\Debug\net7.0\EMG_Sensor_WavePlus.csproj.CoreCompileInputs.cache

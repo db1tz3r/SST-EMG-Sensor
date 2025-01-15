@@ -1,0 +1,20 @@
+using CyUSB;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        USBDeviceList usbDevices = new USBDeviceList(CyConst.DEVICES_CYUSB);
+        CyUSBDevice myDevice = usbDevices[0x04B4, 0x1002] as CyUSBDevice;
+
+        if (myDevice != null)
+        {
+            Console.WriteLine("Gerät gefunden.");
+            // Hier können Sie weitere Befehle hinzufügen, um mit dem Gerät zu kommunizieren
+        }
+        else
+        {
+            Console.WriteLine("Kein Gerät gefunden.");
+        }
+    }
+}

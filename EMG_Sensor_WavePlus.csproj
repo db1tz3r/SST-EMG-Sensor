@@ -1,0 +1,32 @@
+﻿<!-- filepath: /c:/Users/bitzer/Documents/VisualStudioCode/EMG_Sensor_WavePlus/EMG_Sensor_WavePlus.csproj -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="CyUSB">
+      <HintPath>lib/CyUSB.DLL</HintPath>
+    </Reference>
+    <Reference Include="Waveplus.DaqSys">
+      <HintPath>lib/Waveplus.DaqSys.dll</HintPath>
+    </Reference>
+    <Reference Include="Waveplus.DaqSysInterface">
+      <HintPath>lib/Waveplus.DaqSysInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>
