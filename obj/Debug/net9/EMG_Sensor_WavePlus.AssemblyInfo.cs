@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EMG_Sensor_WavePlus")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4f722f416ba97a5cdabef859fb0422f1f15e3ef")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2fccaaa005cb5bf81c14fe2c69d366c47c4d9bdf")]
 [assembly: System.Reflection.AssemblyProductAttribute("EMG_Sensor_WavePlus")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EMG_Sensor_WavePlus")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
