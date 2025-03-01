@@ -1,16 +1,17 @@
 using System;
 using Waveplus.DaqSys;
 using Waveplus.DaqSysInterface;
-using CyUSB;
+using System.Collections.Generic;
 
 public class DataCapture
 {
     private DaqSystem daqSystem;
+    private List<int> sensorIds;
+    public event Action<Dictionary<int, float[]>> OnDataCaptured;
 
-    public event Action<float[]> OnDataCaptured;
-
-    public DataCapture()
+    public DataCapture(List<int> sensorIds)
     {
+        this.sensorIds = sensorIds;
         daqSystem = new DaqSystem();
         Console.WriteLine("DaqSystem initialisiert.");
     }
@@ -26,27 +27,26 @@ public class DataCapture
         }
         else
         {
-            Console.WriteLine("Kein Gerät gefunden.");
             throw new Exception("Gerät nicht verbunden.");
         }
 
-        // Sensor 1 aktivieren
-        int sensorId = 1;
         int installedSensors = daqSystem.InstalledSensors;
-        if (sensorId <= installedSensors)
+        foreach (int sensorId in sensorIds)
         {
-            daqSystem.EnableSensor(sensorId);
-            Console.WriteLine($"Sensor {sensorId} aktiviert.");
-        }
-        else
-        {
-            throw new Exception("Sensor 1 ist nicht installiert.");
+            if (sensorId <= installedSensors)
+            {
+                daqSystem.EnableSensor(sensorId);
+                Console.WriteLine($"Sensor {sensorId} aktiviert.");
+            }
+            else
+            {
+                throw new Exception($"Sensor {sensorId} ist nicht installiert.");
+            }
         }
 
-        // Datenerfassung konfigurieren
         ICaptureConfiguration captureConfig = new CaptureConfiguration
         {
-            SamplingRate = SamplingRate.Hz_2000, // Beispiel: 2000 Hz
+            SamplingRate = SamplingRate.Hz_2000,
             ExternalTriggerEnabled = false
         };
         daqSystem.ConfigureCapture(captureConfig);
@@ -60,12 +60,17 @@ public class DataCapture
 
         daqSystem.DataAvailable += (sender, e) =>
         {
-            float[] samples = new float[e.Samples.GetLength(1)];
-            for (int i = 0; i < e.Samples.GetLength(1); i++)
+            Dictionary<int, float[]> sensorData = new Dictionary<int, float[]>();
+            for (int i = 0; i < sensorIds.Count; i++)
             {
-                samples[i] = e.Samples[0, i];
+                float[] samples = new float[e.Samples.GetLength(1)];
+                for (int j = 0; j < e.Samples.GetLength(1); j++)
+                {
+                    samples[j] = e.Samples[i, j];
+                }
+                sensorData[sensorIds[i]] = samples;
             }
-            OnDataCaptured?.Invoke(samples);
+            OnDataCaptured?.Invoke(sensorData);
         };
     }
 

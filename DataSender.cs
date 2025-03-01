@@ -14,16 +14,16 @@ public class DataSender
         this.serverPort = serverPort;
     }
 
-    public async Task SendDataAsync(float[] data)
+    public async Task SendDataAsync(Dictionary<int, float[]> data)
     {
         try
         {
             using (TcpClient client = new TcpClient(serverAddress, serverPort))
             using (NetworkStream stream = client.GetStream())
             {
-                foreach (float value in data)
+                foreach (var entry in data)
                 {
-                    string message = value.ToString("F2") + "\n";
+                    string message = $"{entry.Key}:{string.Join(",", entry.Value)}|";
                     byte[] messageBytes = Encoding.UTF8.GetBytes(message);
                     await stream.WriteAsync(messageBytes, 0, messageBytes.Length);
                 }
