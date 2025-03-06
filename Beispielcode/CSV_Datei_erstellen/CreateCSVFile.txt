@@ -8,9 +8,11 @@ public class DataCapture
 {
     private DaqSystem daqSystem;
     private StreamWriter csvWriter;
+    private List<int> sensorIds;
 
-    public DataCapture()
+    public DataCapture(List<int> sensorIds)
     {
+        this.sensorIds = sensorIds;
         daqSystem = new DaqSystem();
         Console.WriteLine("DaqSystem initialisiert.");
     }
@@ -30,17 +32,18 @@ public class DataCapture
             throw new Exception("Gerät nicht verbunden.");
         }
 
-        // Sensor 1 aktivieren
-        int sensorId = 1;
         int installedSensors = daqSystem.InstalledSensors;
-        if (sensorId <= installedSensors)
+        foreach (int sensorId in sensorIds)
         {
-            daqSystem.EnableSensor(sensorId);
-            Console.WriteLine($"Sensor {sensorId} aktiviert.");
-        }
-        else
-        {
-            throw new Exception("Sensor 1 ist nicht installiert.");
+            if (sensorId <= installedSensors)
+            {
+                daqSystem.EnableSensor(sensorId);
+                Console.WriteLine($"Sensor {sensorId} aktiviert.");
+            }
+            else
+            {
+                throw new Exception($"Sensor {sensorId} ist nicht installiert.");
+            }
         }
 
         // Datenerfassung konfigurieren
@@ -66,14 +69,16 @@ public class DataCapture
         // Ereignis, wenn Daten verfügbar sind
         daqSystem.DataAvailable += (sender, e) =>
         {
-            float[] samples = new float[e.Samples.GetLength(1)];
-            for (int i = 0; i < e.Samples.GetLength(1); i++)
-            {
-                samples[i] = e.Samples[0, i];
-            }
-
-            // Schreibe jedes Sample in eine neue Zeile der CSV-Datei
-            WriteDataToCsv(samples);
+        List<string> sensorDataList = new List<string>();
+        
+        for (int i = 0; i < sensorIds.Count; i++)
+        {
+            string sensorData = string.Join("....", Enumerable.Range(0, e.Samples.GetLength(1)).Select(j => e.Samples[i, j].ToString()));
+            sensorDataList.Add(sensorData);
+        }
+        
+        string output = string.Join(" | ", sensorDataList);
+        csvWriter.WriteLine(output);
         };
 
         // Warten auf eine manuelle Eingabe, um das Capturing zu stoppen
@@ -102,16 +107,11 @@ public class DataCapture
         csvWriter.Close();
         Console.WriteLine("Datenerfassung gestoppt und CSV-Datei geschlossen.");
     }
-
-    private void WriteDataToCsv(float[] samples)
-    {
-        // Schreibe jedes Sample in eine neue Zeile der CSV-Datei
-        foreach (var sample in samples)
-        {
-            csvWriter.WriteLine(sample); // Jede Zahl kommt in eine neue Zeile
-        }
-    }
 }
+
+
+
+
 
 public class Program
 {
@@ -120,7 +120,8 @@ public class Program
         try
         {
             // Erstelle und initialisiere das DataCapture-Objekt
-            DataCapture dataCapture = new DataCapture();
+            List<int> sensorIds = new List<int> {1,2}; // Sensoren angeben
+            DataCapture dataCapture = new DataCapture(sensorIds);
             dataCapture.Initialize();
 
             // Starte die Datenerfassung
