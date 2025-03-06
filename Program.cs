@@ -6,7 +6,7 @@ class Program
     {
         try
         {
-            List<int> sensorIds = new List<int> {5}; // Sensoren angeben
+            List<int> sensorIds = new List<int> {1,2}; // Sensoren angeben
             DataCapture dataCapture = new DataCapture(sensorIds);
             dataCapture.Initialize();
 
