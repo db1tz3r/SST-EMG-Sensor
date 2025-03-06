@@ -2,12 +2,14 @@ using System;
 using Waveplus.DaqSys;
 using Waveplus.DaqSysInterface;
 using System.Collections.Generic;
+using System.Linq;
+using CyUSB;
 
 public class DataCapture
 {
     private DaqSystem daqSystem;
     private List<int> sensorIds;
-    public event Action<Dictionary<int, float[]>> OnDataCaptured;
+    public event Action<string>? OnDataCaptured;
 
     public DataCapture(List<int> sensorIds)
     {
@@ -55,24 +57,25 @@ public class DataCapture
 
     public void StartCapture()
     {
-        daqSystem.StartCapturing(DataAvailableEventPeriod.ms_100);
-        Console.WriteLine("Datenerfassung gestartet.");
+    daqSystem.StartCapturing(DataAvailableEventPeriod.ms_100);
+    Console.WriteLine("Datenerfassung gestartet.");
 
-        daqSystem.DataAvailable += (sender, e) =>
+    daqSystem.DataAvailable += (sender, e) =>
+    {
+        List<string> sensorDataList = new List<string>();
+        
+        for (int i = 0; i < sensorIds.Count; i++)
         {
-            Dictionary<int, float[]> sensorData = new Dictionary<int, float[]>();
-            for (int i = 0; i < sensorIds.Count; i++)
-            {
-                float[] samples = new float[e.Samples.GetLength(1)];
-                for (int j = 0; j < e.Samples.GetLength(1); j++)
-                {
-                    samples[j] = e.Samples[i, j];
-                }
-                sensorData[sensorIds[i]] = samples;
-            }
-            OnDataCaptured?.Invoke(sensorData);
-        };
+            string sensorData = string.Join(",", Enumerable.Range(0, e.Samples.GetLength(1)).Select(j => e.Samples[i, j].ToString()));
+            sensorDataList.Add(sensorData);
+        }
+        
+        string output = string.Join(" | ", sensorDataList);
+        OnDataCaptured?.Invoke(output);
+    };
     }
+
+
 
     public void StopCapture()
     {

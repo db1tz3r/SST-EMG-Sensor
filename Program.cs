@@ -6,16 +6,17 @@ class Program
     {
         try
         {
-            List<int> sensorIds = new List<int> { 1, 2, 3 }; // Sensoren angeben
+            List<int> sensorIds = new List<int> {5}; // Sensoren angeben
             DataCapture dataCapture = new DataCapture(sensorIds);
             dataCapture.Initialize();
 
             DataSender dataSender = new DataSender("localhost", 12345);
 
-            dataCapture.OnDataCaptured += async (Dictionary<int, float[]> data) =>
+            // Event-Handler anpassen (Empfängt jetzt einen String statt Dictionary)
+            dataCapture.OnDataCaptured += async (string dataString) =>
             {
-                await dataSender.SendDataAsync(data);
-                Console.WriteLine("Daten gesendet.");
+                await dataSender.SendDataAsync(dataString); // Direkt den String senden
+                Console.WriteLine("Daten gesendet: " + dataString);
             };
 
             dataCapture.StartCapture();
