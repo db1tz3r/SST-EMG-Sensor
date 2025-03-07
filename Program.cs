@@ -8,7 +8,7 @@ class Program
     {
         try
         {
-            List<int> sensorIds = new List<int> {1}; 
+            List<int> sensorIds = new List<int> {1,2,4}; 
             DataCapture dataCapture = new DataCapture(sensorIds);
             dataCapture.Initialize();
 

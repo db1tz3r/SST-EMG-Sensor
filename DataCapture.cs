@@ -64,15 +64,25 @@ public class DataCapture
 
         daqSystem.DataAvailable += (sender, e) =>
         {
-            int samplesCount = e.Samples.GetLength(1);
+            int samplesCount = e.Samples.GetLength(1); // Anzahl der Messzeitpunkte
+            int maxSensors = e.Samples.GetLength(0);  // Anzahl der tatsächlich gelieferten Sensorwerte
 
-            for (int j = 0; j < samplesCount; j++) 
+            for (int j = 0; j < samplesCount; j++) // Über alle Messzeitpunkte iterieren
             {
                 List<string> sensorValues = new List<string>();
 
-                for (int i = 0; i < sensorIds.Count; i++)
+                foreach (int sensorId in sensorIds) // Durch alle Sensoren in der Liste iterieren
                 {
-                    sensorValues.Add(e.Samples[i, j].ToString());
+                    int sensorIndex = sensorId - 1; // Berechnet den Index basierend auf Sensor-ID
+
+                    if (sensorIndex >= 0 && sensorIndex < maxSensors)
+                    {
+                        sensorValues.Add(e.Samples[sensorIndex, j].ToString()); // Werte sammeln
+                    }
+                    else
+                    {
+                        sensorValues.Add("N/A"); // Falls Sensor nicht existiert oder keine Werte liefert
+                    }
                 }
 
                 string finalOutput = string.Join(" | ", sensorValues);

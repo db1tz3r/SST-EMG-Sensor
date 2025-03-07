@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Waveplus.DaqSys;
 using Waveplus.DaqSysInterface;
+using System.Collections.Generic;
 using CyUSB;
 
 public class DataCapture
@@ -61,7 +62,7 @@ public class DataCapture
         // CSV-Datei zum Schreiben öffnen
         string filePath = "captured_data.csv";
         csvWriter = new StreamWriter(filePath);
-        csvWriter.WriteLine("Samples"); // Überschrift der CSV-Datei (kann angepasst werden)
+        csvWriter.WriteLine(string.Join(" | ", sensorIds)); // Überschrift der CSV-Datei
 
         daqSystem.StartCapturing(DataAvailableEventPeriod.ms_100);
         Console.WriteLine("Datenerfassung gestartet.");
@@ -69,16 +70,20 @@ public class DataCapture
         // Ereignis, wenn Daten verfügbar sind
         daqSystem.DataAvailable += (sender, e) =>
         {
-        List<string> sensorDataList = new List<string>();
-        
-        for (int i = 0; i < sensorIds.Count; i++)
-        {
-            string sensorData = string.Join(".", Enumerable.Range(0, e.Samples.GetLength(1)).Select(j => e.Samples[i, j].ToString()));
-            sensorDataList.Add(sensorData);
-        }
-        
-        string output = string.Join(" | ", sensorDataList);
-        csvWriter.WriteLine(output);
+            int samplesCount = e.Samples.GetLength(1); // Anzahl der Messzeitpunkte
+
+            for (int j = 0; j < samplesCount; j++) // Über alle Messzeitpunkte iterieren
+            {
+                List<string> sensorValues = new List<string>();
+
+                for (int i = 0; i < sensorIds.Count; i++) // Über alle Sensoren iterieren
+                {
+                    sensorValues.Add(e.Samples[i, j].ToString()); // Werte sammeln
+                }
+
+                string finalOutput = string.Join(" | ", sensorValues);
+                csvWriter.WriteLine(finalOutput);
+            }
         };
 
         // Warten auf eine manuelle Eingabe, um das Capturing zu stoppen
@@ -87,10 +92,9 @@ public class DataCapture
         // Schleife zum Überprüfen, ob eine Taste gedrückt wurde
         while (true)
         {
-            // Überprüfe, ob Eingabe vorhanden ist
-            if (Console.In.Peek() >= 0) // Wenn ein Zeichen in der Eingabe verfügbar ist
+            if (Console.In.Peek() >= 0) // Prüfen, ob eine Taste gedrückt wurde
             {
-                var key = Console.ReadKey(intercept: true).Key; // Lese die Eingabe
+                var key = Console.ReadKey(intercept: true).Key; // Eingabe lesen
                 if (key == ConsoleKey.Q)
                 {
                     StopCapture();
@@ -109,10 +113,6 @@ public class DataCapture
     }
 }
 
-
-
-
-
 public class Program
 {
     public static void Main(string[] args)
@@ -120,7 +120,7 @@ public class Program
         try
         {
             // Erstelle und initialisiere das DataCapture-Objekt
-            List<int> sensorIds = new List<int> {1,2}; // Sensoren angeben
+            List<int> sensorIds = new List<int> {1, 2}; // Sensoren angeben
             DataCapture dataCapture = new DataCapture(sensorIds);
             dataCapture.Initialize();
 
