@@ -2,16 +2,12 @@ using System;
 using Waveplus.DaqSys;
 using Waveplus.DaqSysInterface;
 using System.Collections.Generic;
-using System.Net.Sockets;
-using System.Text;
 using CyUSB;
 
 public class DataCapture
 {
     private DaqSystem daqSystem;
     private List<int> sensorIds;
-    private TcpClient client;
-    private NetworkStream stream;
 
     public event Action<string>? OnDataCaptured;
 
@@ -33,6 +29,7 @@ public class DataCapture
         }
         else
         {
+            Console.WriteLine("Kein Gerät gefunden.");
             throw new Exception("Gerät nicht verbunden.");
         }
 
@@ -50,6 +47,7 @@ public class DataCapture
             }
         }
 
+        // **Abtastrate auf 1000 Hz setzen**
         ICaptureConfiguration captureConfig = new CaptureConfiguration
         {
             SamplingRate = SamplingRate.Hz_2000,
@@ -61,80 +59,31 @@ public class DataCapture
 
     public void StartCapture()
     {
-        // **Nur einmal die TCP-Verbindung aufbauen**
-        try
-        {
-            client = new TcpClient("127.0.0.1", 12345);
-            stream = client.GetStream();
-            Console.WriteLine("TCP-Verbindung hergestellt.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Fehler beim Verbinden mit Socket: {ex.Message}");
-            return;
-        }
-
         daqSystem.StartCapturing(DataAvailableEventPeriod.ms_10);
         Console.WriteLine("Datenerfassung gestartet.");
 
         daqSystem.DataAvailable += (sender, e) =>
         {
-            int samplesCount = e.Samples.GetLength(1); // Anzahl der Messzeitpunkte
+            int samplesCount = e.Samples.GetLength(1);
 
-            for (int j = 0; j < samplesCount; j++) // Über alle Messzeitpunkte iterieren
+            for (int j = 0; j < samplesCount; j++) 
             {
                 List<string> sensorValues = new List<string>();
 
-                for (int i = 0; i < sensorIds.Count; i++) // Über alle Sensoren iterieren
+                for (int i = 0; i < sensorIds.Count; i++)
                 {
-                    sensorValues.Add(e.Samples[i, j].ToString()); // Werte sammeln
+                    sensorValues.Add(e.Samples[i, j].ToString());
                 }
 
                 string finalOutput = string.Join(" | ", sensorValues);
                 OnDataCaptured?.Invoke(finalOutput);
-
-                // **Daten an den Socket senden**
-                SendData(finalOutput);
             }
         };
-    }
-
-    private void SendData(string data)
-    {
-        try
-        {
-            if (stream != null && client.Connected)
-            {
-                byte[] message = Encoding.ASCII.GetBytes(data + "\n");
-                stream.Write(message, 0, message.Length);
-                Console.WriteLine($"Daten gesendet: {data}");
-            }
-            else
-            {
-                Console.WriteLine("Socket nicht verbunden.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Fehler beim Senden der Daten: {ex.Message}");
-        }
     }
 
     public void StopCapture()
     {
         daqSystem.StopCapturing();
         Console.WriteLine("Datenerfassung gestoppt.");
-
-        // **Socket Verbindung sauber schließen**
-        try
-        {
-            stream?.Close();
-            client?.Close();
-            Console.WriteLine("TCP-Verbindung geschlossen.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Fehler beim Schließen der Verbindung: {ex.Message}");
-        }
     }
 }
